@@ -8,9 +8,13 @@ import java.util.Random;
 import java.util.Scanner;
 
 import com.amazonaws.mturk.requester.Assignment;
-
 import mTurk.ImageSurvey;
 
+/*
+ *This Class is main class to achieve Clustering computation 
+ * It has 98 percent to calculate the distance by computer 
+ * and 2 persent possibility using Amazon Mechanical Turk service to ask workers to ask the questions
+ * */
 public class KMean {
 	// k is the cluster number
 	private int k;
@@ -29,6 +33,7 @@ public class KMean {
 		
 	}
 
+	// Seperate images into k clusters
 	public KMean(int k, String filePath)
 	{
 		this.k = k;
@@ -39,6 +44,10 @@ public class KMean {
 		getPoints = reader.getImages();
 	}
 	
+	/*
+	 * Entry of clustering algorithm
+	 * It will call two functions 
+	 * */
 	public void doCluster() throws IOException
 	{
 		int clusterId = 0;
@@ -71,6 +80,7 @@ public class KMean {
 		}		
 	}
 	
+	// First time of clustering
 	private ArrayList<Cluster> startCluster() throws IOException
 	{
 		// Calculate distance for first time
@@ -128,7 +138,7 @@ public class KMean {
 			
 		} //end loop one
 		
-	//Test for cluster after add distance
+	//Get the result of cluster after add distance
 		System.out.println("Initilise the cluter: " );
 		for(int s=0; s<clusterContainer.size(); s++)
 		{
@@ -136,14 +146,11 @@ public class KMean {
 		}
 		System.out.println();
 		return clusterContainer;
-		
-		
 	}// End of Start Cluster()
 	
 	/*
-	 * In this method, it has two options for user to get the result of similarity
-	 * Option 1 will calculate the distance automatically, and program goes on 
-	 * Option 2 will ask user to input the distance after showing the images in the url
+	 * In this method, it has one options for user to get the result of similarity
+	 * Option 1 will ask user to input the distance after showing the images in the url
 	 * */
 	private void clustering() throws IOException
 	{
@@ -168,13 +175,11 @@ public class KMean {
 				virtualCentersContainer.add(clusterContainer.get(j).getVirtualCenter());
 				System.out.println("Cluter " + j + " center is :" + clusterContainer.get(j).getCenterPoint().ImageFeatureToString());
 			}
-//test
-			
+		
 			for(int test = 0 ; test<virtualCentersContainer.size(); test++)
 			{
 				System.out.println("Cluster " + test + " Centroid is : \n" + virtualCentersContainer.get(test).ImageToString());
 			}
-			//end
 			// put all cluster members into container
 			for(int i=0; i<clusterContainer.size();i++)
 			{
@@ -183,7 +188,6 @@ public class KMean {
 					pointContainer.add(clusterContainer.get(i).getClusterMembers().get(e));
 				}
 			}
-		
 			// clear all members 
 			for(int y=0;y<clusterContainer.size();y++)
 			{
@@ -211,14 +215,14 @@ public class KMean {
 					else
 					{
 						
-// below is the method trying to get result from the Turk 
+						// Trying to get result from the Turk 
 						ImageSurvey survey = new ImageSurvey(virtualCentersContainer.get(j).getImageUrl(), pointContainer.get(i).getImageUrl());
 						try
 						{
 							System.out.println("Please wait! Creating Survey.... ! \n\n");
-							//survey.createImageSurvey();
+							survey.createImageSurvey();
 							System.out.println("Please wait! Getting the results from Turk.... ! \n\n");
-							int timeLeft = 20;
+							int timeLeft = 60;
 							for(int time = 0; time < timeLeft; time++)
 							{
 								System.out.println(timeLeft + "s has left....");
@@ -232,33 +236,17 @@ public class KMean {
 							System.out.println(ex.getMessage());
 						}
 						//get rusult from the turk 
-						//String result = survey.getHitResult();
-						String result = "";
+						String result = survey.getHitResult();
 						if(!result.isEmpty())
 						{
 							System.out.println("The results is " + result);
 							double dis = Double.parseDouble(result);
 							disContainer.add(dis);
 						}
+						//If no workers accept the hit, it will go on clustring in two options
 						else
 						{
-//Option 1 : Computer calculate automatically if there is no answer
-							/*
-							System.out.println("No worker has answered the question....! Computer will go on calculate...");
-							try
-							{
-								Thread.sleep(2000);
-							}
-							catch(InterruptedException err)
-							{
-								System.out.println(err.getMessage());
-							}
-							Distance dis = new Distance(clusterContainer.get(j).getCenterPoint(),pointContainer.get(i));
-							dis.caculateDis();
-							disContainer.add(dis.getDistance());
-							*/
-//Option 2: Ask user to input the distance if there is no answer
-							
+						//Option 1: Ask user to input the distance if there is no answer
 							survey.answerSurveyManually();
 							System.out.println("Tell me how similar between those two images ");
 							try
@@ -273,7 +261,6 @@ public class KMean {
 								System.out.println(e.getMessage());
 							}
 						}
-
 					}
 				}// end two
 				double flag = 9999999;
