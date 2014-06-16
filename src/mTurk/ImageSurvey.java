@@ -14,10 +14,9 @@ import com.amazonaws.mturk.requester.HIT;
 import com.amazonaws.mturk.requester.QualificationRequirement;
 
 /*
-import com.amazonaws.mturk.requester.ReviewPolicy;
-import com.amazonaws.mturk.requester.HITLayoutParameter;
-*/
-
+ * This class is used to call the Amazon Turk services to ask worker to 
+ * finish the question
+ * */
 public class ImageSurvey {
 	
 	private RequesterService service;
@@ -25,22 +24,21 @@ public class ImageSurvey {
 	private String hitTypeId;
 	private String image_url;
 	private String image1_url;
-	
-    private String title = "Similarity of two images";
-    private String description="On what level do you think the images are similar with each other ??";
-    private String keywords = "similarity";
-    private String hitLayoutId="3JB2H6P6URZ0BAXZ4Q8KI5GEKVSJ0C";
-    private String hitUrl;
-    private String defaultHitUrl = "https://www.mturk.com/mturk/welcome";
+    	private String title = "Similarity of two images";
+    	private String description="On what level do you think the images are similar with each other ??";
+	private String keywords = "similarity";
+ 	private String hitLayoutId="3JB2H6P6URZ0BAXZ4Q8KI5GEKVSJ0C";
+    	private String hitUrl;
+    	private String defaultHitUrl = "https://www.mturk.com/mturk/welcome";
     
-    private int maxAssignments = 4;
-    private double reward = 0.00;
+    	private int maxAssignments = 4;
+    	private double reward = 0.00;
     
-    private QualificationRequirement[] qualRequirements;
+    	private QualificationRequirement[] qualRequirements;
     
-    private Map<String, String > hitLayoutParameters = new HashMap<String,String>();
+    	private Map<String, String > hitLayoutParameters = new HashMap<String,String>();
     
-    private HIT hit;
+    	private HIT hit;
 
 	public ImageSurvey(String url, String url1)
 	{
@@ -59,8 +57,8 @@ public class ImageSurvey {
 	    	
 	    	this.hitLayoutParameters.put("image_url", image_url);
 	    	this.hitLayoutParameters.put("image1_url", image1_url);
-			this.hitTypeId = service.registerHITType(
-					RequesterService.DEFAULT_AUTO_APPROVAL_DELAY_IN_SECONDS, 
+		this.hitTypeId = service.registerHITType(
+				RequesterService.DEFAULT_AUTO_APPROVAL_DELAY_IN_SECONDS, 
 	    			RequesterService.DEFAULT_ASSIGNMENT_DURATION_IN_SECONDS, 
 	    			reward, 
 	    			title, 
@@ -68,7 +66,6 @@ public class ImageSurvey {
 	    			description, 
 	    			qualRequirements
 	    			);
-	    			
 			System.out.println("HIT type ID \n" + hitTypeId);
 			hit = service.createHIT(title, description, reward, maxAssignments, hitLayoutId, hitLayoutParameters); 
 
@@ -91,17 +88,13 @@ public class ImageSurvey {
        Assignment[] assignments = service.getAllAssignmentsForHIT(hit.getHITId());
        for (Assignment assign : assignments)
        {
-    	   /*
-    	   AnswerType answerType = null;
-    	   RequesterService.getAnswerValue(assign.getAssignmentId(), answerType);
-    	   */
     	   assign.getAnswer();
     	   results += assign.getAnswer();
        }
     	return results;
     }
     
-    
+    //Answer the survey manually if no worker accept the HIT
     public void answerSurveyManually()
     {
     	System.out.println("No worker has accepted your hit, please enter the distance by yourself....!");
@@ -131,7 +124,6 @@ public class ImageSurvey {
 		{
 			System.out.println(e.getMessage());
 		}
-    	
     }
 
 }
