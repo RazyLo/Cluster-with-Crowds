@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import kmeans.Image;
 
 public class Cluster {
-	private int clusterID;
+	private int clusterID;	
 	private Image centerImage;
 	private ArrayList<Image> clusterMembers;
-	ArrayList<ArrayList<Double>> temp ;
+	ArrayList<ArrayList<Double>> temp ;	// Container be used to store images features
 	ArrayList<Double> tempDouble ;
-	//private List<Point> members;
 	
+	//Empty constructor 
 	public Cluster()
 	{
 		
@@ -31,7 +31,6 @@ public class Cluster {
 		this.clusterID = id;
 		this.centerImage = center;
 		this.clusterMembers = clusterMembers;
-		
 	}
 	
 	public void setCluster(int id, Image center)
@@ -39,7 +38,6 @@ public class Cluster {
 		this.clusterID = id;
 		this.centerImage = center;
 	}
-	
 	
 	
 	public ArrayList<Image> getClusterMembers()
@@ -50,7 +48,6 @@ public class Cluster {
 	public void addMember(Image member)
 	{
 		if(!clusterMembers.contains(member))
-		//if(cluster != null)
 		{
 			clusterMembers.add(member);
 		}
@@ -90,6 +87,7 @@ public class Cluster {
 	}
 	
 
+	// Update the Cluter center after calculate the distance
 	public void updateCluterCenter()
 	{
 		double tempSum;
@@ -104,45 +102,40 @@ public class Cluster {
 		{
 			for(int i=0; i<clusterMembers.size();i++)
 			{
-				tempDouble	 = new ArrayList<Double>();
+				tempDouble = new ArrayList<Double>();
 				for(int j=0;j<clusterMembers.get(i).getImageFeature().size();j++)
 				{
-				
 					tempDouble.add(clusterMembers.get(i).getImageFeature().get(j));
 				}
 				temp.add(tempDouble);
-		}
-		
-		//System.out.println("Cluster size : " + temp.size());
-
-		sizeOfCluster = temp.size();
-		sizeOfPoint = tempDouble.size();
-		ArrayList<Double> newCenterPoint = new ArrayList<Double>();
-		Image newPoint = new Image();;
-		
-		for(int a=0; a<sizeOfPoint;a++)
-		{
-			
-			flag = 0;
-			sum = 0;
-			tempSum = 0;
-			for(int j=0; j<sizeOfCluster;j++)
-			{
-				tempSum += temp.get(flag).get(index);
-				sum = tempSum/sizeOfCluster;
-				//System.out.print(temp.get(flag).get(index) + " ");
-				flag++;
 			}
+		
+			sizeOfCluster = temp.size();
+			sizeOfPoint = tempDouble.size();
+			ArrayList<Double> newCenterPoint = new ArrayList<Double>();
+			Image newPoint = new Image();;
+		
+			for(int a=0; a<sizeOfPoint;a++)
+			{
+			
+				flag = 0;
+				sum = 0;
+				tempSum = 0;
+				for(int j=0; j<sizeOfCluster;j++)
+				{
+					tempSum += temp.get(flag).get(index);
+					sum = tempSum/sizeOfCluster;
+					flag++;
+				}	
 				newCenterPoint.add(sum);
 				index++;
-		}
+			}
 			newPoint.setCenterImage(newCenterPoint); 
 			this.centerImage = newPoint;
-			//System.out.println("newcenter is :" + center.pointToString());
-			//return temp;
 		}
 	}
 	
+	//Get the centroid of current cluster
 	public Image getVirtualCenter() throws IOException
 	{
 		Image virtualCenter = new Image();
@@ -186,7 +179,6 @@ public class Cluster {
 					members +="Image" + clusterMembers.get(i).getImageId() + clusterMembers.get(i).ImageFeatureToString() + "; ";
 				}
 					temp = "Cluster " + clusterID + ": " +"Center is " + centerImage.ImageFeatureToString()  +"\n\t\t\tMembers: " + members ; 
-					//temp = "Cluster: " + clusterID + ", " +"Center "+ center.pointToString() +" Members size: " + cluster.size() ; 
 			}
 			if(clusterMembers.size() == 0)
 			{
