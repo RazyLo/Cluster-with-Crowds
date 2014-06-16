@@ -2,6 +2,10 @@ package kmeans;
 
 import java.util.ArrayList;
 
+/*
+ * This Class is used to intialize the images features 
+ * 
+ * */
 public class Image {
 	private ArrayList<Double> feature;
 	private String imageURL;
@@ -12,6 +16,7 @@ public class Image {
 		
 	}
 	
+	//Give each image a unique id
 	public void setImage(int id, String Url, ArrayList<Double> features)
 	{
 		this.id = id;
