@@ -116,7 +116,7 @@ public class KMean {
 					}
 					catch(Exception ex)
 					{
-						System.out.println(ex.getMessage() + " here");
+						System.out.println(ex.getMessage());
 					}
 				}
 				
